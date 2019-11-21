@@ -1,11 +1,12 @@
 #!/usr/bin/python
 
+import setuptools
 from distutils.core import setup
 
 name = 'keycloak-httpd-client-install'
 
 setup(name=name,
-      version='1.2',
+      version='1.2.2',
       description='Tools to configure Apache HTTPD as Keycloak client',
       author='John Dennis',
       author_email='jdennis@redhat.com',
@@ -20,7 +21,7 @@ setup(name=name,
                       'templates/oidc-client-registration.tpl',
                       'templates/oidc-client-representation.tpl',
                       'templates/oidc_httpd.conf'])],
-      requires = ['requests', 'requests_oauthlib', 'jinja2'],
+      install_requires = ['requests', 'requests_oauthlib', 'jinja2', 'six', 'setuptools', 'lxml'],
       classifiers = [           # see https://pypi.python.org/pypi?%3Aaction=list_classifiers
           "Programming Language :: Python",
           "Programming Language :: Python :: 3",
