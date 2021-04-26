@@ -68,7 +68,7 @@ disable. Or the pathname to a OpenSSL CA bundle to use.
 .TP
 .BR \-\-template\-dir " " \fITEMPLATE_DIR\fR
 Template location
-(default: /usr/share/keycloak\-httpd\-client/templates)
+ (default: /usr/share/keycloak\-httpd\-client\-install/templates)
 .TP
 .BR \-\-httpd\-dir " " \fIHTTPD_DIR\fR
 Template location
@@ -123,7 +123,7 @@ format.
 .RS
 .B registration
 .RS
-The data used to create the client is sent to the Keycloak registraton
+The data used to create the client is sent to the Keycloak registration
 endpoint. The data format depends on the type of client being created
 and can be contolled by the \fI\-\-client\-data\-format\fR. The
 registration method has the advantage of not requiring admin
