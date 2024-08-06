@@ -14,36 +14,36 @@ ADMIN_CLIENT_ID = 'admin-cli'
 AUTH_ROLES = ['root-admin', 'realm-admin', 'anonymous']
 
 URL_OIDC_TOKEN = (
-    '{server}/auth/realms/{realm}/protocol/openid-connect/token')
+    '{server}{base_path}/realms/{realm}/protocol/openid-connect/token')
 URL_SERVER_INFO = (
-    '{server}/auth/admin/serverinfo/')
+    '{server}{base_path}/admin/serverinfo/')
 URL_REALMS = (
-    '{server}/auth/admin/realms')
+    '{server}{base_path}/admin/realms')
 URL_REALMS_REALM = (
-    '{server}/auth/admin/realms/{realm}')
+    '{server}{base_path}/admin/realms/{realm}')
 URL_REALM_SAML_DESCRIPTOR = (
-    '{server}/auth/realms/{realm}/protocol/saml/descriptor')
+    '{server}{base_path}/realms/{realm}/protocol/saml/descriptor')
 
 URL_CLIENTS = (
-    '{server}/auth/admin/realms/{realm}/clients')
+    '{server}{base_path}/admin/realms/{realm}/clients')
 URL_CLIENTS_ID = (
-    '{server}/auth/admin/realms/{realm}/clients/{id}')
+    '{server}{base_path}/admin/realms/{realm}/clients/{id}')
 URL_CLIENT_SECRET = (
-    '{server}/auth/admin/realms/{realm}/clients/{id}/client-secret')
+    '{server}{base_path}/admin/realms/{realm}/clients/{id}/client-secret')
 URL_CLIENT_DESCRIPTION_CONVERTER = (
-    '{server}/auth/admin/realms/{realm}/client-description-converter')
+    '{server}{base_path}/admin/realms/{realm}/client-description-converter')
 
 URL_INITIAL_ACCESS_TOKEN = (
-    '{server}/auth/admin/realms/{realm}/clients-initial-access')
+    '{server}{base_path}/admin/realms/{realm}/clients-initial-access')
 URL_CLIENT_REGISTRATION_DEFAULT = (
-    '{server}/auth/realms/{realm}/clients-registrations/default')
+    '{server}{base_path}/realms/{realm}/clients-registrations/default')
 URL_CLIENT_REGISTRATION_SAML2 = (
-    '{server}/auth/realms/{realm}/clients-registrations/saml2-entity-descriptor')
+    '{server}{base_path}/realms/{realm}/clients-registrations/saml2-entity-descriptor')
 URL_CLIENT_REGISTRATION_OIDC = (
-    '{server}/auth/realms/{realm}/clients-registrations/openid-connect')
+    '{server}{base_path}/realms/{realm}/clients-registrations/openid-connect')
 
 URL_CLIENT_PROTOCOL_MAPPER_MODEL = (
-    '{server}/auth/admin/realms/{realm}/clients/{id}/protocol-mappers/models')
+    '{server}{base_path}/admin/realms/{realm}/clients/{id}/protocol-mappers/models')
 
 
 CONTENT_TYPE_JSON = 'application/json;charset=utf-8'
@@ -98,8 +98,9 @@ class RESTError(Exception):
 
 class KeycloakREST(object):
 
-    def __init__(self, server, auth_role=None, session=None):
+    def __init__(self, server, base_path, auth_role=None, session=None):
         self.server = server
+        self.base_path = base_path
         self.auth_role = auth_role
         self.session = session
 
@@ -130,7 +131,9 @@ class KeycloakREST(object):
         cmd_name = 'get initial access token for realm "{realm}"'.format(
             realm=realm_name)
         url = URL_INITIAL_ACCESS_TOKEN.format(
-            server=self.server, realm=urlquote(realm_name))
+            server=self.server,
+            base_path=urlquote(self.base_path),
+            realm=urlquote(realm_name))
 
         params = {'expiration': 60,  # seconds
                   'count': 1}
@@ -153,7 +156,9 @@ class KeycloakREST(object):
 
     def get_server_info(self):
         cmd_name = 'get server info'
-        url = URL_SERVER_INFO.format(server=self.server)
+        url = URL_SERVER_INFO.format(
+            server=self.server,
+            base_path=urlquote(self.base_path))
 
         self._log_rest_request(cmd_name, url)
         response = self.session.get(url)
@@ -173,7 +178,9 @@ class KeycloakREST(object):
 
     def get_realms(self):
         cmd_name = 'get realms'
-        url = URL_REALMS.format(server=self.server)
+        url = URL_REALMS.format(
+            server=self.server,
+            base_path=urlquote(self.base_path))
 
         self._log_rest_request(cmd_name, url)
         response = self.session.get(url)
@@ -193,7 +200,9 @@ class KeycloakREST(object):
 
     def create_realm(self, realm_name):
         cmd_name = 'create realm "{realm}"'.format(realm=realm_name)
-        url = URL_REALMS.format(server=self.server)
+        url = URL_REALMS.format(
+            server=self.server,
+            base_path=urlquote(self.base_path))
 
         params = {'enabled': True,
                   'id': realm_name,
@@ -218,7 +227,9 @@ class KeycloakREST(object):
     def delete_realm(self, realm_name):
         cmd_name = 'delete realm "{realm}"'.format(realm=realm_name)
         url = URL_REALMS_REALM.format(
-            server=self.server, realm=urlquote(realm_name))
+            server=self.server,
+            base_path=urlquote(self.base_path),
+            realm=urlquote(realm_name))
 
         self._log_rest_request(cmd_name, url)
         response = self.session.delete(url)
@@ -238,7 +249,9 @@ class KeycloakREST(object):
     def get_realm_saml_metadata(self, realm_name):
         cmd_name = 'get metadata for realm "{realm}"'.format(realm=realm_name)
         url = URL_REALM_SAML_DESCRIPTOR.format(
-            server=self.server, realm=urlquote(realm_name))
+            server=self.server,
+            base_path=urlquote(self.base_path),
+            realm=urlquote(realm_name))
 
         self._log_rest_request(cmd_name, url)
         response = self.session.get(url)
@@ -253,7 +266,9 @@ class KeycloakREST(object):
     def get_clients(self, realm_name):
         cmd_name = 'get clients in realm "{realm}"'.format(realm=realm_name)
         url = URL_CLIENTS.format(
-            server=self.server, realm=urlquote(realm_name))
+            server=self.server,
+            base_path=urlquote(self.base_path),
+            realm=urlquote(realm_name))
 
         self._log_rest_request(cmd_name, url)
         response = self.session.get(url)
@@ -276,7 +291,9 @@ class KeycloakREST(object):
         cmd_name = 'get clientid "{clientid}" in realm "{realm}"'.format(
             clientid=clientid, realm=realm_name)
         url = URL_CLIENTS.format(
-            server=self.server, realm=urlquote(realm_name))
+            server=self.server,
+            base_path=urlquote(self.base_path),
+            realm=urlquote(realm_name))
 
         params = {'clientId': clientid}
 
@@ -319,7 +336,9 @@ class KeycloakREST(object):
         cmd_name = 'get client descriptor realm "{realm}"'.format(
             realm=realm_name)
         url = URL_CLIENT_DESCRIPTION_CONVERTER.format(
-            server=self.server, realm=urlquote(realm_name))
+            server=self.server,
+            base_path=urlquote(self.base_path),
+            realm=urlquote(realm_name))
 
         headers = {'Content-Type': CONTENT_TYPE_XML}
 
@@ -344,6 +363,7 @@ class KeycloakREST(object):
                     format(id=obj_id, realm=realm_name))
         url = URL_CLIENT_SECRET.format(
             server=self.server,
+            base_path=urlquote(self.base_path),
             realm=urlquote(realm_name),
             id=urlquote(id))
 
@@ -368,6 +388,7 @@ class KeycloakREST(object):
                     format(id=obj_id, realm=realm_name))
         url = URL_CLIENT_SECRET.format(
             server=self.server,
+            base_path=urlquote(self.base_path),
             realm=urlquote(realm_name),
             id=urlquote(obj_id))
 
@@ -391,7 +412,9 @@ class KeycloakREST(object):
         cmd_name = ('create client from client representation in '
                     'realm "{realm}"'.format(realm=realm_name))
         url = URL_CLIENTS.format(
-            server=self.server, realm=urlquote(realm_name))
+            server=self.server,
+            base_path=urlquote(self.base_path),
+            realm=urlquote(realm_name))
 
         headers = {'Content-Type': CONTENT_TYPE_JSON}
 
@@ -441,7 +464,9 @@ class KeycloakREST(object):
                              client_data_format)
 
         url = template.format(
-            server=self.server, realm=urlquote(realm_name))
+            server=self.server,
+            base_path=urlquote(self.base_path),
+            realm=urlquote(realm_name))
 
         headers = {'Content-Type': content_type}
 
@@ -476,6 +501,7 @@ class KeycloakREST(object):
             id=obj_id, realm=realm_name)
         url = URL_CLIENTS_ID.format(
             server=self.server,
+            base_path=urlquote(self.base_path),
             realm=urlquote(realm_name),
             id=urlquote(obj_id))
 
@@ -499,7 +525,9 @@ class KeycloakREST(object):
         cmd_name = 'update client {clientid} in realm "{realm}"'.format(
             clientid=client['clientId'], realm=realm_name)
         url = URL_CLIENTS_ID.format(
-            server=self.server, realm=urlquote(realm_name),
+            server=self.server,
+            base_path=urlquote(self.base_path),
+            realm=urlquote(realm_name),
             id=urlquote(obj_id))
 
         self._log_rest_request(cmd_name, url, client)
@@ -562,6 +590,7 @@ class KeycloakREST(object):
                         realm=realm_name))
         url = URL_CLIENT_PROTOCOL_MAPPER_MODEL.format(
             server=self.server,
+            base_path=urlquote(self.base_path),
             realm=urlquote(realm_name),
             id=urlquote(obj_id))
 
@@ -611,9 +640,9 @@ class KeycloakREST(object):
 
 class KeycloakAdminConnection(KeycloakREST):
 
-    def __init__(self, server, auth_role, realm, client_id,
-                 username, password, tls_verify):
-        super(KeycloakAdminConnection, self).__init__(server, auth_role)
+    def __init__(self, server, base_path, auth_role, realm,
+                 client_id, username, password, tls_verify):
+        super(KeycloakAdminConnection, self).__init__(server, base_path, auth_role)
 
         self.realm = realm
         self.client_id = client_id
@@ -624,7 +653,9 @@ class KeycloakAdminConnection(KeycloakREST):
 
     def _create_session(self, tls_verify):
         token_url = URL_OIDC_TOKEN.format(
-            server=self.server, realm=urlquote(self.realm))
+            server=self.server,
+            base_path=urlquote(self.base_path),
+            realm=urlquote(self.realm))
         refresh_url = token_url
 
         client = LegacyApplicationClient(client_id=self.client_id)
@@ -645,8 +676,8 @@ class KeycloakAdminConnection(KeycloakREST):
 
 class KeycloakAnonymousConnection(KeycloakREST):
 
-    def __init__(self, server, tls_verify):
-        super(KeycloakAnonymousConnection, self).__init__(server, 'anonymous')
+    def __init__(self, server, base_path, tls_verify):
+        super(KeycloakAnonymousConnection, self).__init__(server, urlquote(base_path), 'anonymous')
         self.session = self._create_session(tls_verify)
 
 

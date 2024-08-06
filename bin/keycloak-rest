@@ -179,6 +179,11 @@ def main():
                        required=True,
                        help='DNS name or IP address of Keycloak server')
 
+    group.add_argument('--base-path',
+                       default='',
+                       help=('basepath of keycloak endpoint '
+                             '(default: use server endpoint root path)'))
+
     group.add_argument('-a', '--auth-role',
                        choices=keycloak_rest.AUTH_ROLES,
                        default='root-admin',
@@ -334,9 +339,11 @@ def main():
     try:
         anonymous_conn = keycloak_rest.KeycloakAnonymousConnection(
             options.server,
+            options.base_path,
             options.tls_verify)
 
         admin_conn = keycloak_rest.KeycloakAdminConnection(options.server,
+                                                           options.base_path,
                                                            options.auth_role,
                                                            options.admin_realm,
                                                            keycloak_rest.ADMIN_CLIENT_ID,

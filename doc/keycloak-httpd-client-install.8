@@ -86,6 +86,13 @@ realm name
 Keycloak server URL
 (default: None)
 .TP
+.BR \-s ", " \-\-keycloak\-base\-path " " \fIKEYCLOAK_SERVER_URL\fR
+basepath of keycloak endpoint, will be
+autodetected for older Keycloak versions with "/auth"
+default for newer Keycloak versions:
+use server endpoint root path
+(default: None)
+.TP
 .BR \-a ", " \-\-keycloak\-auth\-role " " \fIroot\-admin|realm\-admin|anonymous\fR
 authenticating as what type of user
 (default: root\-admin)
