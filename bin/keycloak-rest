@@ -177,7 +177,9 @@ def main():
 
     group.add_argument('-s', '--server',
                        required=True,
-                       help='DNS name or IP address of Keycloak server')
+                       help='URL pointing to Keycloak server. '
+                       'The URL should look like https://keycloak.example.com or '
+                       'for older version of keycloak https://keycloak.example.com/auth')
 
     group.add_argument('-a', '--auth-role',
                        choices=keycloak_rest.AUTH_ROLES,

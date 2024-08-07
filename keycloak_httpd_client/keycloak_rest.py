@@ -14,36 +14,36 @@ ADMIN_CLIENT_ID = 'admin-cli'
 AUTH_ROLES = ['root-admin', 'realm-admin', 'anonymous']
 
 URL_OIDC_TOKEN = (
-    '{server}/auth/realms/{realm}/protocol/openid-connect/token')
+    '{server}/realms/{realm}/protocol/openid-connect/token')
 URL_SERVER_INFO = (
-    '{server}/auth/admin/serverinfo/')
+    '{server}/admin/serverinfo/')
 URL_REALMS = (
-    '{server}/auth/admin/realms')
+    '{server}/admin/realms')
 URL_REALMS_REALM = (
-    '{server}/auth/admin/realms/{realm}')
+    '{server}/admin/realms/{realm}')
 URL_REALM_SAML_DESCRIPTOR = (
-    '{server}/auth/realms/{realm}/protocol/saml/descriptor')
+    '{server}/realms/{realm}/protocol/saml/descriptor')
 
 URL_CLIENTS = (
-    '{server}/auth/admin/realms/{realm}/clients')
+    '{server}/admin/realms/{realm}/clients')
 URL_CLIENTS_ID = (
-    '{server}/auth/admin/realms/{realm}/clients/{id}')
+    '{server}/admin/realms/{realm}/clients/{id}')
 URL_CLIENT_SECRET = (
-    '{server}/auth/admin/realms/{realm}/clients/{id}/client-secret')
+    '{server}/admin/realms/{realm}/clients/{id}/client-secret')
 URL_CLIENT_DESCRIPTION_CONVERTER = (
-    '{server}/auth/admin/realms/{realm}/client-description-converter')
+    '{server}/admin/realms/{realm}/client-description-converter')
 
 URL_INITIAL_ACCESS_TOKEN = (
-    '{server}/auth/admin/realms/{realm}/clients-initial-access')
+    '{server}/admin/realms/{realm}/clients-initial-access')
 URL_CLIENT_REGISTRATION_DEFAULT = (
-    '{server}/auth/realms/{realm}/clients-registrations/default')
+    '{server}/realms/{realm}/clients-registrations/default')
 URL_CLIENT_REGISTRATION_SAML2 = (
-    '{server}/auth/realms/{realm}/clients-registrations/saml2-entity-descriptor')
+    '{server}/realms/{realm}/clients-registrations/saml2-entity-descriptor')
 URL_CLIENT_REGISTRATION_OIDC = (
-    '{server}/auth/realms/{realm}/clients-registrations/openid-connect')
+    '{server}/realms/{realm}/clients-registrations/openid-connect')
 
 URL_CLIENT_PROTOCOL_MAPPER_MODEL = (
-    '{server}/auth/admin/realms/{realm}/clients/{id}/protocol-mappers/models')
+    '{server}/admin/realms/{realm}/clients/{id}/protocol-mappers/models')
 
 
 CONTENT_TYPE_JSON = 'application/json;charset=utf-8'
