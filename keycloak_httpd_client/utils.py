@@ -16,9 +16,8 @@ import subprocess
 import tempfile
 import requests
 
-import six
-from six.moves.urllib.parse import quote as urlquote
-from six.moves.urllib.parse import urlsplit, urlunsplit, urlparse
+from urllib.parse import quote as urlquote
+from urllib.parse import urlsplit, urlunsplit, urlparse
 
 from lxml import etree
 
@@ -261,7 +260,7 @@ def is_path_antecedent(ancestor, antecedent):
 def nolog_replace(string, nolog):
     """Replace occurences of strings given in `nolog` with XXXXXXXX"""
     for value in nolog:
-        if not isinstance(value, six.string_types):
+        if not isinstance(value, str):
             continue
 
         quoted = urlquote(value)
@@ -319,7 +318,7 @@ def run_cmd(args, stdin=None, raiseonerr=True,
     p_out = None
     p_err = None
 
-    if isinstance(nolog, six.string_types):
+    if isinstance(nolog, str):
         # We expect a tuple (or list, or other iterable) of nolog strings.
         # Passing just a single string is bad: strings are also, so this
         # would result in every individual character of that string being

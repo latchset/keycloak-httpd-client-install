@@ -9,8 +9,6 @@ import os
 import sys
 import traceback
 
-import six
-
 from keycloak_httpd_client import keycloak_rest
 import keycloak_httpd_client.utils as utils
 
@@ -349,7 +347,7 @@ def main():
     except Exception as e:
         if options.show_traceback:
             traceback.print_exc()
-        print(six.text_type(e), file=sys.stderr)
+        print(str(e), file=sys.stderr)
         result = 1
         return result
 
@@ -362,7 +360,7 @@ def main():
     except Exception as e:
         if options.show_traceback:
             traceback.print_exc()
-        print(six.text_type(e), file=sys.stderr)
+        print(str(e), file=sys.stderr)
         result = 2
         return result
 
