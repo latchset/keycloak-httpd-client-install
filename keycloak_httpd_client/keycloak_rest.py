@@ -4,7 +4,7 @@ from oauthlib.oauth2 import LegacyApplicationClient
 import requests
 from requests_oauthlib import OAuth2Session
 
-from six.moves.urllib.parse import quote as urlquote
+from urllib.parse import quote as urlquote
 
 from keycloak_httpd_client import utils
 

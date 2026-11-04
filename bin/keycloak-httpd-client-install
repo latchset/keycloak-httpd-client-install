@@ -13,8 +13,7 @@ import sys
 import traceback
 
 import jinja2
-import six
-from six.moves.urllib.parse import urlsplit, urlunsplit
+from urllib.parse import urlsplit, urlunsplit
 
 from keycloak_httpd_client import keycloak_rest
 from keycloak_httpd_client import __version__
@@ -147,7 +146,7 @@ class KeycloakServer(object):
             raise CommunicationError('Unable to open connection to "%s" '
                                      'as admin: %s' % (
                                          self.options.keycloak_server_url,
-                                         six.text_type(e)))
+                                         str(e)))
 
     def _open_anonymous_conn(self):
         try:
@@ -167,7 +166,7 @@ class KeycloakServer(object):
             raise CommunicationError('Unable to open connection to "%s" '
                                      'as anonymous user: %s' % (
                                          self.options.keycloak_server_url,
-                                         six.text_type(e)))
+                                         str(e)))
 
     def get_admin_conn(self):
         if self._admin_conn is None:
@@ -343,7 +342,7 @@ class Client(KeycloakServer, object):
                 traceback.print_exc()
             raise OperationError((
                 'Unable to create directory "%s": %s' %
-                (self.options.httpd_conf_dir, six.text_type(e))))
+                (self.options.httpd_conf_dir, str(e))))
 
         logger.step('Assure HTTP federation directory is present')
         try:
@@ -353,7 +352,7 @@ class Client(KeycloakServer, object):
                 traceback.print_exc()
             raise OperationError((
                 'Unable to create directory "%s": %s' %
-                (self.options.httpd_federation_dir, six.text_type(e))))
+                (self.options.httpd_federation_dir, str(e))))
 
         # Create jinja2 Template Environment
 
@@ -371,7 +370,7 @@ class Client(KeycloakServer, object):
             raise ConfigurationError('Unable to set up jinja2 templates, '
                                      'template_dir="%s": %s' %
                                      (self.options.template_dir,
-                                      six.text_type(e)))
+                                      str(e)))
 
     def configure_client(self):
         raise NotImplementedError()
@@ -987,37 +986,37 @@ def main():
     except (OperationError, keycloak_rest.RESTError) as e:
         if options.show_traceback:
             traceback.print_exc()
-        print('%s: %s' % (e.__class__.__name__, six.text_type(e)),
+        print('%s: %s' % (e.__class__.__name__, str(e)),
               file=sys.stderr)
         return STATUS_OPERATION_ERROR
     except ConfigurationError as e:
         if options.show_traceback:
             traceback.print_exc()
-        print('%s: %s' % (e.__class__.__name__, six.text_type(e)),
+        print('%s: %s' % (e.__class__.__name__, str(e)),
               file=sys.stderr)
         return STATUS_CONFIGURATION_ERROR
     except InsufficientPrivilegeError as e:
         if options.show_traceback:
             traceback.print_exc()
-        print('%s: %s' % (e.__class__.__name__, six.text_type(e)),
+        print('%s: %s' % (e.__class__.__name__, str(e)),
               file=sys.stderr)
         return STATUS_INSUFFICIENT_PRIVILEGE
     except CommunicationError as e:
         if options.show_traceback:
             traceback.print_exc()
-        print('%s: %s' % (e.__class__.__name__, six.text_type(e)),
+        print('%s: %s' % (e.__class__.__name__, str(e)),
               file=sys.stderr)
         return STATUS_COMMUNICATION_ERROR
     except AlreadyExistsError as e:
         if options.show_traceback:
             traceback.print_exc()
-        print('%s: %s' % (e.__class__.__name__, six.text_type(e)),
+        print('%s: %s' % (e.__class__.__name__, str(e)),
               file=sys.stderr)
         return STATUS_ALREADY_EXISTS_ERROR
     except Exception as e:
         if options.show_traceback:
             traceback.print_exc()
-        print('%s: %s' % (e.__class__.__name__, six.text_type(e)),
+        print('%s: %s' % (e.__class__.__name__, str(e)),
               file=sys.stderr)
         return STATUS_OPERATION_ERROR
 
