@@ -14,6 +14,11 @@ BuildArch:      noarch
 
 BuildRequires:  python3-devel
 BuildRequires:  (python3-setuptools if python3-devel >= 3.12)
+# runtime deps for import check
+BuildRequires:  python3-requests
+BuildRequires:  python3-requests-oauthlib
+BuildRequires:  python3-jinja2
+BuildRequires:  python3-lxml
 
 Requires:       %{_bindir}/keycloak-httpd-client-install
 
@@ -52,6 +57,9 @@ of a Keycloak server.
 
 install -d -m 755 %{buildroot}/%{_mandir}/man8
 install -c -m 644 doc/keycloak-httpd-client-install.8 %{buildroot}/%{_mandir}/man8
+
+%check
+%py3_check_import keycloak_httpd_client
 
 %files
 %license LICENSE.txt
