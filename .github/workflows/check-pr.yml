@@ -48,8 +48,10 @@ jobs:
       - name: Build rpm
         run: |
           set -x
-          dnf -y install rpm-build python3-devel python3-setuptools
-          rpmbuild -D "release_string $GITHUB_SHA" -D "_rpmdir $(pwd)/rpmbuild" -ta keycloak-httpd-client-install-*.tar.gz
+          dnf -y install rpm-build
+          HOME=$(pwd) rpmbuild -ts keycloak-httpd-client-install-*.tar.gz
+          dnf -y builddep ./rpmbuild/SRPMS/*.src.rpm
+          rpmbuild -D "release_string $GITHUB_SHA" -D "_rpmdir $(pwd)/rpmbuild" -rb ./rpmbuild/SRPMS/*.src.rpm
           find ./rpmbuild -name '*.rpm' -exec mv {} ./ \;
       - name: Upload rpms
         uses: actions/upload-artifact@v4
@@ -70,8 +72,10 @@ jobs:
       - name: Build rpm
         run: |
           set -x
-          dnf -y install rpm-build python3-devel python3-setuptools
-          rpmbuild -D "release_string $GITHUB_SHA" -D "_rpmdir $(pwd)/rpmbuild" -ta keycloak-httpd-client-install-*.tar.gz
+          dnf -y install rpm-build dnf-plugins-core
+          HOME=$(pwd) rpmbuild -ts keycloak-httpd-client-install-*.tar.gz
+          dnf -y builddep ./rpmbuild/SRPMS/*.src.rpm
+          rpmbuild -D "release_string $GITHUB_SHA" -D "_rpmdir $(pwd)/rpmbuild" -rb ./rpmbuild/SRPMS/*.src.rpm
           find ./rpmbuild -name '*.rpm' -exec mv {} ./ \;
       - name: Upload rpms
         uses: actions/upload-artifact@v4
