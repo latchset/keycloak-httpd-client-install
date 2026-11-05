@@ -20,7 +20,7 @@ setup(name=name,
                     'templates/oidc-client-registration.tpl',
                     'templates/oidc-client-representation.tpl',
                     'templates/oidc_httpd.conf'])],
-      requires=['requests', 'requests_oauthlib', 'jinja2'],
+      requires=['requests', 'requests_oauthlib', 'jinja2', 'lxml'],
       classifiers=[           # see https://pypi.python.org/pypi?%3Aaction=list_classifiers
           "Programming Language :: Python",
           "Programming Language :: Python :: 3",
