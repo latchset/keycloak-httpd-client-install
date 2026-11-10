@@ -5,10 +5,10 @@ from distutils.core import setup
 name = 'keycloak-httpd-client-install'
 
 setup(name=name,
-      version='1.3',
+      version='1.4',
       description='Tools to configure Apache HTTPD as Keycloak client',
-      author='John Dennis',
-      author_email='jdennis@redhat.com',
+      author='Tomas Halman',
+      author_email='thalman@redhat.com',
       url='https://github.com/latchset/keycloak-httpd-client-install',
       license='GPLv3',
       packages=['keycloak_httpd_client'],
