@@ -2,7 +2,7 @@
 %global summary Tools to configure Apache HTTPD as Keycloak client
 
 Name:           %{srcname}
-Version:        1.3
+Version:        1.4
 Release:        %{?release_string}%{!?release_string: 1}%{?dist}
 Summary:        %{summary}
 
