@@ -6,9 +6,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Set up Python environment
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
       - name: Run flake8
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Create archive
         run: |
           set -x
@@ -30,7 +30,7 @@ jobs:
           git archive --format=tar.gz --prefix=keycloak-httpd-client-install-$APP_VERSION/ HEAD >keycloak-httpd-client-install-$APP_VERSION.tar.gz
           echo "APP_VERSION=$APP_VERSION" >> "$GITHUB_ENV"
       - name: Upload tar archive
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: tar
           path: keycloak-httpd-client-install-*.tar.gz
@@ -42,19 +42,51 @@ jobs:
     needs: create-archive
     steps:
       - name: Download tar
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: tar
       - name: Build rpm
         run: |
-          set -x
-          dnf -y install rpm-build
-          HOME=$(pwd) rpmbuild -ts keycloak-httpd-client-install-*.tar.gz
-          dnf -y builddep ./rpmbuild/SRPMS/*.src.rpm
-          rpmbuild -D "release_string $GITHUB_SHA" -D "_rpmdir $(pwd)/rpmbuild" -rb ./rpmbuild/SRPMS/*.src.rpm
+          set +x
+          export HOME="$(pwd)"
+          dnf -y install rpm-build pyproject-rpm-macros python3-devel
+          # srpm
+          rpmbuild -ts keycloak-httpd-client-install-*.tar.gz
+          SRPM=$(find "$HOME/rpmbuild/SRPMS" -name 'keycloak-httpd-client-install-*.src.rpm' | head -n 1)
+
+          # Resolve dynamic BuildRequires
+          for attempt in $(seq 1 10); do
+              set +e
+              rpmbuild -D "release_string $GITHUB_SHA" --rebuild "$SRPM"
+              result=$?
+              set -e
+
+              if [ "$result" -eq 0 ]; then
+                  echo "All dynamic BuildRequires are satisfied, rpm build"
+                  break;
+              elif [ "$result" -eq 11 ]; then
+                  echo "Missing dynamic BuildRequires, installing them"
+                  NOSRC=$(find "$HOME/rpmbuild/SRPMS" -name 'keycloak-httpd-client-install-*.buildreqs.nosrc.rpm' -print -quit)
+                  if [ -z "$NOSRC" ]; then
+                      echo "ERROR: buildreqs.nosrc.rpm not found"
+                      exit 1
+                  fi
+                  dnf -y builddep "$NOSRC"
+              else
+                  echo "ERROR: rpmbuild failed with exit code $rc"
+                  exit "$result"
+              fi
+          done
+
+          if [ "$attempt" -eq 10 ] && [ "$result" -ne 0 ]; then
+              echo "ERROR: Dynamic BuildRequires not resolved after 10 attempts"
+              exit 1
+          fi
+
+          rm -f "$NOSRC"
           find ./rpmbuild -name '*.rpm' -exec mv {} ./ \;
       - name: Upload rpms
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: fedora-rpms
           path: "*.rpm"
@@ -62,23 +94,58 @@ jobs:
 
   build-el-rpm:
     runs-on: ubuntu-latest
-    container: rockylinux:9
+    container: rockylinux:10
     needs: create-archive
     steps:
       - name: Download tar
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: tar
       - name: Build rpm
         run: |
-          set -x
-          dnf -y install rpm-build dnf-plugins-core
-          HOME=$(pwd) rpmbuild -ts keycloak-httpd-client-install-*.tar.gz
-          dnf -y builddep ./rpmbuild/SRPMS/*.src.rpm
-          rpmbuild -D "release_string $GITHUB_SHA" -D "_rpmdir $(pwd)/rpmbuild" -rb ./rpmbuild/SRPMS/*.src.rpm
+          set +x
+          export HOME="$(pwd)"
+          dnf -y install 'dnf-command(builddep)' 'dnf-command(config-manager)'
+          dnf config-manager --set-enabled crb
+          dnf -y install rpm-build pyproject-rpm-macros python3-devel
+
+          # srpm
+          rpmbuild -ts keycloak-httpd-client-install-*.tar.gz
+          SRPM=$(find "$HOME/rpmbuild/SRPMS" -name 'keycloak-httpd-client-install-*.src.rpm' | head -n 1)
+
+          # Resolve dynamic BuildRequires
+          for attempt in $(seq 1 10); do
+              set +e
+              rpmbuild -D "release_string $GITHUB_SHA" --rebuild "$SRPM"
+              result=$?
+              set -e
+
+              if [ "$result" -eq 0 ]; then
+                  echo "All dynamic BuildRequires are satisfied, rpm build"
+                  break;
+              elif [ "$result" -eq 11 ]; then
+                  echo "Missing dynamic BuildRequires, installing them"
+                  NOSRC=$(find "$HOME/rpmbuild/SRPMS" -name 'keycloak-httpd-client-install-*.buildreqs.nosrc.rpm' -print -quit)
+                  if [ -z "$NOSRC" ]; then
+                      echo "ERROR: buildreqs.nosrc.rpm not found"
+                      exit 1
+                  fi
+                  dnf -y builddep "$NOSRC"
+              else
+                  echo "ERROR: rpmbuild failed with exit code $rc"
+                  exit "$result"
+              fi
+          done
+
+          if [ "$attempt" -eq 10 ] && [ "$result" -ne 0 ]; then
+              echo "ERROR: Dynamic BuildRequires not resolved after 10 attempts"
+              exit 1
+          fi
+
+          rm -f "$NOSRC"
           find ./rpmbuild -name '*.rpm' -exec mv {} ./ \;
       - name: Upload rpms
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: el-rpms
           path: "*.rpm"

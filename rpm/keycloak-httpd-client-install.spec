@@ -13,13 +13,6 @@ Source0:        https://github.com/lachset/keycloak-httpd-client-install/release
 BuildArch:      noarch
 
 BuildRequires:  python3-devel
-BuildRequires:  (python3-setuptools if python3-devel >= 3.12)
-# runtime deps for import check
-BuildRequires:  python3-requests
-BuildRequires:  python3-requests-oauthlib
-BuildRequires:  python3-jinja2
-BuildRequires:  python3-lxml
-
 Requires:       %{_bindir}/keycloak-httpd-client-install
 
 %description
@@ -33,13 +26,7 @@ Keycloak IdP.
 %package -n python3-%{srcname}
 Summary:        %{summary}
 
-%{?python_provide:%python_provide python3-%{srcname}}
-
 Requires:       %{name} = %{version}-%{release}
-Requires:       python3-requests
-Requires:       python3-requests-oauthlib
-Requires:       python3-jinja2
-Requires:       python3-lxml
 
 %description -n python3-%{srcname}
 Keycloak is an authentication server. This package contains libraries and
@@ -49,17 +36,21 @@ of a Keycloak server.
 %prep
 %autosetup -n %{srcname}-%{version} -p1
 
+%generate_buildrequires
+%pyproject_buildrequires
+
 %build
-%py3_build
-
-%install
-%py3_install
-
-install -d -m 755 %{buildroot}/%{_mandir}/man8
-install -c -m 644 doc/keycloak-httpd-client-install.8 %{buildroot}/%{_mandir}/man8
+%pyproject_wheel
 
 %check
-%py3_check_import keycloak_httpd_client
+%pyproject_check_import
+
+%install
+%pyproject_install
+%pyproject_save_files '*'
+install -d -m 755 %{buildroot}/%{_mandir}/man8
+install -c -m 644 doc/keycloak-httpd-client-install.8 %{buildroot}/%{_mandir}/man8
+gzip %{buildroot}/%{_mandir}/man8/keycloak-httpd-client-install.8
 
 %files
 %license LICENSE.txt

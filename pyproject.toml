@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "keycloak-httpd-client-install"
+version = "1.4"
+description = "Tools to configure Apache HTTPD as Keycloak client"
+authors = [
+    { name = "John Dennis", email = "jdennis@redhat.com" },
+    { name = "Tomas Halman", email = "thalman@redhat.com" }
+]
+readme = { text = "Tools to configure Apache HTTPD as Keycloak client", content-type = "text/plain" }
+requires-python = ">=3.9"
+dependencies = [
+    "requests",
+    "requests-oauthlib",
+    "jinja2",
+    "lxml",
+]
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Development Status :: 5 - Production/Stable",
+    "Operating System :: POSIX",
+]
+
+[project.urls]
+Homepage = "https://github.com/latchset/keycloak-httpd-client-install"
+Repository = "https://github.com/latchset/keycloak-httpd-client-install"
+
+[tool.setuptools]
+packages = ["keycloak_httpd_client"]
+script-files = [
+    "bin/keycloak-httpd-client-install",
+    "bin/keycloak-rest",
+]
+
+[tool.setuptools.data-files]
+"share/keycloak-httpd-client-install/templates" = [
+    "templates/mellon_httpd.conf",
+    "templates/sp_metadata.tpl",
+    "templates/oidc-client-registration.tpl",
+    "templates/oidc-client-representation.tpl",
+    "templates/oidc_httpd.conf",
+]
